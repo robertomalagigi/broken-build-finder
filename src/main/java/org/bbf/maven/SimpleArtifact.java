@@ -1,7 +1,5 @@
 package org.bbf.maven;
 
-import org.junit.Test;
-
 /**
  * User: robertom
  * Date: May 30, 2010
@@ -30,6 +28,7 @@ public class SimpleArtifact {
         return artifactId.equals(this.artifactId);
     }
 
+    
     public boolean hasVersion(String version) {
         return version.equals(this.version);
     }
