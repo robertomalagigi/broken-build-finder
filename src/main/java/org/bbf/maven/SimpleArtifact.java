@@ -1,5 +1,7 @@
 package org.bbf.maven;
 
+import org.junit.Test;
+
 /**
  * User: robertom
  * Date: May 30, 2010
@@ -11,8 +13,6 @@ public class SimpleArtifact {
     private String version;
     private String scope;
     private String type;
-                      //test
-
 
     public SimpleArtifact(String groupId, String artifactId, String version, String scope, String type) {
         this.groupId = groupId;
