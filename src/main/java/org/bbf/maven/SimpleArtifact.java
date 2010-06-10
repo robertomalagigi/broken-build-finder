@@ -11,6 +11,8 @@ public class SimpleArtifact {
     private String version;
     private String scope;
     private String type;
+                      //test
+
 
     public SimpleArtifact(String groupId, String artifactId, String version, String scope, String type) {
         this.groupId = groupId;
