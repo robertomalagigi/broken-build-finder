@@ -28,7 +28,6 @@ public class SimpleArtifact {
         return artifactId.equals(this.artifactId);
     }
 
-    
     public boolean hasVersion(String version) {
         return version.equals(this.version);
     }

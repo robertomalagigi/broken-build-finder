@@ -1,8 +1,10 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
+import org.bbf.vcs.HistoryRetriever;
+import org.bbf.vcs.NoRevisionAvailableException;
+import org.bbf.vcs.RevisionCalculator;
+import org.bbf.vcs.SourceControlRepository;
 import org.joda.time.DateTime;
-import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.io.SVNRepository;
 
 import java.util.Collections;
 
@@ -11,15 +13,16 @@ import java.util.Collections;
  * Date: May 31, 2010
  * Time: 4:36:26 PM
  */
-public class SVNHistoryRetriever {
-    private SVNRepository svnRepository;
+public class SimpleHistoryRetriever implements HistoryRetriever {
+    private SourceControlRepository sourceControlRepository;
     private RevisionCalculator revisionCalculator;
 
-    public SVNHistoryRetriever(SVNRepository svnRepository, RevisionCalculator revisionCalculator) {
-        this.svnRepository = svnRepository;
+    public SimpleHistoryRetriever(SourceControlRepository sourceControlRepository, RevisionCalculator revisionCalculator) {
+        this.sourceControlRepository = sourceControlRepository;
         this.revisionCalculator = revisionCalculator;
     }
 
+    @Override
     public SVNHistory getHistory(DateTime dateBeforeStartRevision, DateTime dateAfterEndRevision) {
         long startRevision = 0;
         try {
@@ -32,11 +35,6 @@ public class SVNHistoryRetriever {
         if (endRevision < startRevision) {
             return new SVNHistory(Collections.EMPTY_LIST);
         }
-        try {
-            return new SVNHistory(svnRepository.log(new String[]{""}, null, startRevision, endRevision, true, true));
-        } catch (SVNException e) {
-            throw new RuntimeException("Exception retrieving history from revision " + startRevision +
-                    " (" + dateBeforeStartRevision + ") to revision " + endRevision + " (" + dateAfterEndRevision + ")", e);
-        }
+        return new SVNHistory(sourceControlRepository.log(startRevision, endRevision));
     }
 }

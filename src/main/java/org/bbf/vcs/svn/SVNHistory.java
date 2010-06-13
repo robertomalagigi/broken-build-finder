@@ -1,4 +1,4 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
 import org.tmatesoft.svn.core.SVNLogEntry;
 

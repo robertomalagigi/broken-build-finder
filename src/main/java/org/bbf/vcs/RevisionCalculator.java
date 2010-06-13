@@ -1,4 +1,4 @@
-package org.bbf.svn;
+package org.bbf.vcs;
 
 import org.joda.time.DateTime;
 

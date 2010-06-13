@@ -1,4 +1,4 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
 import org.apache.commons.io.FileUtils;
 import org.tmatesoft.svn.core.SVNCommitInfo;
@@ -125,6 +125,11 @@ public class SVNCommands {
      * file.
      */
 
+    SVNCommitInfo addDirWithDefaultComment(String dirPath) throws SVNException {
+        return addDir(createDefaultComment(dirPath), dirPath);
+    }
+
+
     SVNCommitInfo addDir(String comment, String dirPath) throws SVNException {
         ISVNEditor editor = repository.getCommitEditor(comment, null);
 
@@ -166,6 +171,14 @@ public class SVNCommands {
         return editor.closeEdit();
     }
 
+
+    SVNCommitInfo addFileWithDefaultContentAndComment(String filePath) throws SVNException {
+        return addFile(createDefaultComment(filePath), filePath, filePath + " content");
+    }
+
+    private String createDefaultComment(String filePath) {
+        return filePath + " comment";
+    }
 
     SVNCommitInfo addFile(String comment,
                           String filePath, String fileContent) throws SVNException {
@@ -228,6 +241,12 @@ public class SVNCommands {
     /*
      * This method performs committing file modifications.
      */
+
+    SVNCommitInfo modifyFile(String dirPath, String filePath) throws SVNException {
+        String fullFilePath = dirPath + "/" + filePath + "";
+        return modifyFile(fullFilePath + " modified", dirPath,
+                fullFilePath, createDefaultComment(fullFilePath), "new content");
+    }
 
     SVNCommitInfo modifyFile(String comment, String dirPath,
                              String filePath, String oldData, String newData) throws SVNException {

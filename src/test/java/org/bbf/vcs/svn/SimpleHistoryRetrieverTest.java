@@ -1,4 +1,4 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -20,7 +20,7 @@ import static org.hamcrest.Matchers.is;
  * Date: May 30, 2010
  * Time: 10:25:02 PM
  */
-public class SVNHistoryRetrieverTest {
+public class SimpleHistoryRetrieverTest {
 
     @After
     public void tearDown() {
@@ -41,7 +41,7 @@ public class SVNHistoryRetrieverTest {
 
         SVNRepository svnRepository = svnCommands.getRepository();
 
-        SVNHistoryRetriever historyRetriever = new SVNHistoryRetriever(svnRepository, new SimpleRevisionCalculator(svnRepository));
+        SimpleHistoryRetriever historyRetriever = createHistoryRetriever(svnRepository);
 
         SVNHistory history = historyRetriever.getHistory(dateBeforeFirstRevision, dateAfterLastRevision);
 
@@ -73,7 +73,7 @@ public class SVNHistoryRetrieverTest {
 
         SVNRepository svnRepository = svnCommands.getRepository();
 
-        SVNHistoryRetriever historyRetriever = new SVNHistoryRetriever(svnRepository, new SimpleRevisionCalculator(svnRepository));
+        SimpleHistoryRetriever historyRetriever = createHistoryRetriever(svnRepository);
 
         SVNHistory history = historyRetriever.getHistory(dateAfterLastCommit, dateAfterLastCommit.plusDays(1));
 
@@ -94,13 +94,12 @@ public class SVNHistoryRetrieverTest {
 
         SVNRepository svnRepository = svnCommands.getRepository();
 
-        SVNHistoryRetriever historyRetriever = new SVNHistoryRetriever(svnRepository, new SimpleRevisionCalculator(svnRepository));
+        SimpleHistoryRetriever historyRetriever = createHistoryRetriever(svnRepository);
 
         SVNHistory history = historyRetriever.getHistory(dateAfterStartRevision, dateAfterStartRevision.plusSeconds(2));
 
         assertThat(history.getEntries().size(), is(0));
     }
-
 
     @Test
     public void historyReturnsNoEntriesIfThereAreNotCommitBetweenDatesButOnlyAfter() throws Exception {
@@ -114,11 +113,15 @@ public class SVNHistoryRetrieverTest {
 
         SVNRepository svnRepository = svnCommands.getRepository();
 
-        SVNHistoryRetriever historyRetriever = new SVNHistoryRetriever(svnRepository, new SimpleRevisionCalculator(svnRepository));
+        SimpleHistoryRetriever historyRetriever = createHistoryRetriever(svnRepository);
 
         SVNHistory history = historyRetriever.getHistory(dateBeforeFirstCommit, dateBeforeFirstCommit.plusSeconds(2));
 
         assertThat(history.getEntries().size(), is(0));
+    }
+
+    private SimpleHistoryRetriever createHistoryRetriever(SVNRepository svnRepository) {
+        return new SimpleHistoryRetriever(new SVNSourceControlRepository(svnRepository), new SimpleRevisionCalculator(new SVNSourceControlRepository(svnRepository)));
     }
 
     private void assertThatChangedPathIs(Object changedPath, String details) {

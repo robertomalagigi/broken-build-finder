@@ -1,8 +1,10 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
+import org.bbf.vcs.NoRevisionAvailableException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
@@ -19,16 +21,23 @@ import static org.junit.Assert.fail;
  * Time: 10:25:02 PM
  */
 public class SimpleRevisionCalculatorTest {
+    private SVNCommands svnCommands;
+    private SimpleRevisionCalculator simpleRevisionCalculator;
+
+
+    @Before
+    public void setUp() {
+        svnCommands = new SVNCommands();
+        simpleRevisionCalculator = new SimpleRevisionCalculator(new SVNSourceControlRepository(svnCommands.getRepository()));
+    }
 
     @After
     public void tearDown() {
-        new SVNCommands().deleteRepository();
+        svnCommands.deleteRepository();
     }
 
     @Test
     public void firstRevisionNumberAfterDateReturnsTheFirstRevisionInCaseOfOneCommitsAfterThatDate() throws Exception {
-        SVNCommands svnCommands = new SVNCommands();
-
         svnCommands.addDir("revision 1", "dir1");
 
         Date dateAfterFirstRevision = new Date();
@@ -36,21 +45,15 @@ public class SimpleRevisionCalculatorTest {
         waitForSeconds(2);
         svnCommands.addDir("revision 2", "dir2");
 
-        SimpleRevisionCalculator simpleRevisionCalculator = new SimpleRevisionCalculator(svnCommands.getRepository());
-
         assertThat(simpleRevisionCalculator.firstRevisionNumberAfterDate(new DateTime(dateAfterFirstRevision)), is(2L));
     }
 
     @Test
     public void firstRevisionNumberAfterDateReturnsTheFirstRevisionInCaseOfTwoCommitsAfterThatDate() throws Exception {
-        SVNCommands svnCommands = new SVNCommands();
-
         Date dateBeforeFirstRevision = new Date();
         svnCommands.addDir("revision 1", "dir1");
 
         svnCommands.addDir("revision 2", "dir2");
-
-        SimpleRevisionCalculator simpleRevisionCalculator = new SimpleRevisionCalculator(svnCommands.getRepository());
 
         assertThat(simpleRevisionCalculator.firstRevisionNumberAfterDate(new DateTime(dateBeforeFirstRevision)), is(1L));
     }
@@ -58,34 +61,22 @@ public class SimpleRevisionCalculatorTest {
 
     @Test
     public void lastRevisionNumberBeforeDateReturnsRightRevisionInCaseOfThreeCommitsBeforeThatDateAndOneAfter() throws Exception {
-        SVNCommands svnCommands = new SVNCommands();
-
         svnCommands.addDir("revision 1", "dir1");
         svnCommands.addDir("revision 2", "dir2");
         svnCommands.addDir("revision 3", "dir3");
         DateTime dateAfterThirdRevision = new DateTime();
         svnCommands.addDir("revision 4", "dir4");
 
-        SimpleRevisionCalculator simpleRevisionCalculator = new SimpleRevisionCalculator(svnCommands.getRepository());
-
         assertThat(simpleRevisionCalculator.lastRevisionNumberBeforeDate(dateAfterThirdRevision), is(3L));
     }
 
     @Test
     public void lastRevisionNumberBeforeDateReturnsZeroIfThereAreNoCommits() throws Exception {
-        SVNCommands svnCommands = new SVNCommands();
-
-        SimpleRevisionCalculator simpleRevisionCalculator = new SimpleRevisionCalculator(svnCommands.getRepository());
-
         assertThat(simpleRevisionCalculator.lastRevisionNumberBeforeDate(new DateTime()), is(0L));
     }
 
     @Test
     public void firstRevisionNumberAfterDateThrowsNoRevisionAvailableExceptionIfThereAreNoCommits() throws Exception {
-        SVNCommands svnCommands = new SVNCommands();
-
-        SimpleRevisionCalculator simpleRevisionCalculator = new SimpleRevisionCalculator(svnCommands.getRepository());
-
         DateTime dateToCheckForRevisions = new DateTime();
         String expDateMessage = DateTimeFormat.forPattern("dd MM yyyy HH:mm:ss.SS").print(dateToCheckForRevisions);
         try {

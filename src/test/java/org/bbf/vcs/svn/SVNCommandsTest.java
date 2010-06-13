@@ -1,4 +1,4 @@
-package org.bbf.svn;
+package org.bbf.vcs.svn;
 
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -43,7 +43,6 @@ public class SVNCommandsTest {
         waitForSeconds(2);
         String modifiedContents = "This is the same file but modified a little.";
         svnCommands.modifyFile("file fileContent changed", "test", "test/file.txt", fileContent, modifiedContents);
-        Date revision4Date = new Date();
 
         SVNRepository repository = svnCommands.getRepository();
 
