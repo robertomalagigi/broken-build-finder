@@ -86,12 +86,12 @@
         </plugins>
     </build>
 
-    <!--<repositories>
-        <sourceControlRepository>
+    <repositories>
+        <repository>
             <id>svnkit-repo</id>
             <url>http://maven.svnkit.com/maven2/</url>
-        </sourceControlRepository>
-    </repositories>-->
+        </repository>
+    </repositories>
 
 </project>
 
